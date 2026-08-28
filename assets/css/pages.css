@@ -225,3 +225,13 @@ body.is-ready .case-title::after{width:min(150px,22vw)}
   .home-project .project-meta{padding-right:0}.home-work-more{margin-top:60px}
   .work-browser-visual .work-phone-shot{width:27%;right:-1%;bottom:-7%;border-width:3px;border-radius:9px}
 }
+
+/* Extended portfolio: branding, photography and social */
+.art-project-visual{padding-top:0;background:#e9e4dc;overflow:hidden}
+.art-project-visual .portfolio-art{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .8s var(--page-ease)}
+.home-project:hover .portfolio-art{transform:scale(1.018)}
+.portfolio-image-visual{overflow:hidden;background:#e9e4dc}
+.portfolio-image-visual>img{display:block;width:100%;height:100%;min-height:520px;object-fit:cover;transition:transform .8s var(--page-ease)}
+.work-feature:hover .portfolio-image-visual>img{transform:scale(1.015)}
+.case-gallery{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;margin:72px 0 96px}.case-gallery img{display:block;width:100%;height:100%;min-height:440px;object-fit:cover}.case-gallery .tall{grid-row:span 2}.case-gallery-brand{margin:60px 0 90px}.case-gallery-brand img{display:block;width:100%;height:auto}
+@media(max-width:800px){.portfolio-image-visual>img{min-height:340px}.case-gallery{grid-template-columns:1fr;gap:14px;margin:45px 0 70px}.case-gallery img{min-height:280px}.case-gallery .tall{grid-row:auto}}
