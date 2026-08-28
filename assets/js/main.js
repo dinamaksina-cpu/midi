@@ -38,17 +38,16 @@
     if(window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
     if(q('.hero h1 .line span') && !reduce){gsap.to('.hero h1 .line span',{y:0,duration:1.05,stagger:.08,ease:'power4.out'});gsap.fromTo('.hero-top, .hero-copy, .hero-cta-group, .scroll-cue',{opacity:0,y:16},{opacity:1,y:0,duration:.9,stagger:.1,delay:.2,ease:'power3.out'});}
     if(q('#heroOrb') && !reduce){
-      gsap.to('#heroOrb',{rotation:360,duration:22,repeat:-1,ease:'none'});
-      gsap.to('#orbRing',{rotation:-360,duration:50,repeat:-1,ease:'none'});
-      const shell=q('#heroOrbShell');
-      if(shell && matchMedia('(hover:hover)').matches){
-        window.addEventListener('mousemove',e=>{
-          const px=(e.clientX/innerWidth-.5), py=(e.clientY/innerHeight-.5);
-          gsap.to(shell,{x:px*18,y:py*13,duration:.8,ease:'power3.out'});
-        },{passive:true});
+      gsap.to('#heroOrb',{rotate:360,duration:34,repeat:-1,ease:'none'});
+      gsap.to('#heroOrb',{y:10,duration:3.8,yoyo:true,repeat:-1,ease:'sine.inOut'});
+      const orbit=q('#heroOrbitWrap');
+      const hero=q('.hero-wow');
+      if(orbit && hero && matchMedia('(hover:hover)').matches){
+        hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;gsap.to(orbit,{x:px*18,y:py*12,duration:.8,ease:'power3.out'});gsap.to('#heroTitle',{x:px*-5,y:py*-3,duration:.8,ease:'power3.out'});});
+        hero.addEventListener('mouseleave',()=>{gsap.to([orbit,'#heroTitle'],{x:0,y:0,duration:1,ease:'power3.out'});});
       }
-      const role=q('#heroRole');
-      if(role){const roles=['BRAND','WEBSITE','CONTENT','SOCIAL','DIGITAL'];let ri=0;setInterval(()=>{ri=(ri+1)%roles.length;gsap.to(role,{opacity:0,y:-6,duration:.18,onComplete:()=>{role.textContent=roles[ri];gsap.fromTo(role,{opacity:0,y:7},{opacity:1,y:0,duration:.32,ease:'power2.out'});}});},2200);}
+      const serviceWord=q('#heroServiceWord');
+      if(serviceWord){const words=['BRAND','WEBSITE','CONTENT','SOCIAL','DIGITAL'];let i=0;setInterval(()=>{i=(i+1)%words.length;gsap.to(serviceWord,{opacity:0,y:-7,duration:.2,onComplete:()=>{serviceWord.textContent=words[i];gsap.fromTo(serviceWord,{opacity:0,y:7},{opacity:1,y:0,duration:.35});}});},2400);}
     }
     const marquee=q('#marquee'); if(marquee && !reduce) gsap.to(marquee,{xPercent:-50,duration:26,repeat:-1,ease:'linear'});
     qa('.reveal-up').forEach(el=>{const inner=q('.inner',el);if(!inner)return;if(reduce){inner.style.transform='none';inner.style.opacity='1';return;}gsap.set(inner,{yPercent:100,opacity:0});gsap.to(inner,{yPercent:0,opacity:1,duration:1.05,ease:'power4.out',scrollTrigger:{trigger:el,start:'top 88%'}});});
