@@ -19,9 +19,10 @@
   function revealPage(){
     const pre=q('#preloader');
     if(!pre) return initAnimations();
-    const finish=()=>{pre.style.display='none';document.body.style.overflow='';initAnimations();};
+    const alreadySeen=sessionStorage.getItem('midiva_preloaded')==='1';
+    const finish=()=>{pre.style.display='none';document.body.style.overflow='';sessionStorage.setItem('midiva_preloaded','1');initAnimations();};
+    if(alreadySeen || reduce){finish();return;}
     document.body.style.overflow='hidden';
-    if(reduce){finish();return;}
     const counter={v:0}; const tl=gsap.timeline({onComplete:finish});
     if(q('.pl-logo')) tl.to('.pl-logo',{opacity:1,y:0,duration:.45,ease:'power3.out'});
     if(q('#plCount')) tl.to(counter,{v:100,duration:.85,ease:'power2.inOut',onUpdate:()=>q('#plCount').textContent=String(Math.floor(counter.v)).padStart(2,'0')},'<');
@@ -38,6 +39,14 @@
     if(q('#heroOrb') && !reduce){gsap.to('#heroOrb',{rotate:360,duration:26,repeat:-1,ease:'none'});gsap.to('#heroOrb',{y:24,duration:3.4,yoyo:true,repeat:-1,ease:'sine.inOut'});}
     const marquee=q('#marquee'); if(marquee && !reduce) gsap.to(marquee,{xPercent:-50,duration:26,repeat:-1,ease:'linear'});
     qa('.reveal-up').forEach(el=>{const inner=q('.inner',el);if(!inner)return;if(reduce){inner.style.transform='none';inner.style.opacity='1';return;}gsap.set(inner,{yPercent:100,opacity:0});gsap.to(inner,{yPercent:0,opacity:1,duration:1.05,ease:'power4.out',scrollTrigger:{trigger:el,start:'top 88%'}});});
+    if(!reduce){
+      qa('.case-meta > div, .case-copy-grid, .live-preview, .page-actions, .work-feature, .service-block, .values-grid > div').forEach((el,i)=>{
+        gsap.fromTo(el,{opacity:0,y:34},{opacity:1,y:0,duration:.9,ease:'power3.out',delay:Math.min(i*.015,.08),scrollTrigger:{trigger:el,start:'top 90%',once:true}});
+      });
+      qa('.live-preview').forEach(el=>{
+        gsap.fromTo(el,{clipPath:'inset(8% 5% 8% 5%)',scale:.985},{clipPath:'inset(0% 0% 0% 0%)',scale:1,duration:1.1,ease:'power4.out',scrollTrigger:{trigger:el,start:'top 88%',once:true}});
+      });
+    }
     initHorizontal();
     if(!reduce){qa('[data-tilt]').forEach(card=>{const img=q('img',card);if(!img)return;card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;gsap.to(img,{x:px*14,y:py*14,duration:.5,ease:'power3.out'});});card.addEventListener('mouseleave',()=>gsap.to(img,{x:0,y:0,duration:.7,ease:'power3.out'}));});}
   }
@@ -54,6 +63,12 @@
   qa('[data-serv]').forEach(row=>{row.setAttribute('tabindex','0');row.setAttribute('role','button');const toggle=()=>{const was=row.classList.contains('open');qa('[data-serv]').forEach(r=>r.classList.remove('open'));if(!was)row.classList.add('open');};row.addEventListener('click',toggle);row.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});});
 
   const cookie=q('#cookieBar'); if(cookie){const choice=localStorage.getItem('midiva_cookie_choice');if(!choice)setTimeout(()=>cookie.classList.add('show'),1000);q('#cookieAccept')?.addEventListener('click',()=>{localStorage.setItem('midiva_cookie_choice','accepted');cookie.classList.remove('show');});q('#cookieDecline')?.addEventListener('click',()=>{localStorage.setItem('midiva_cookie_choice','declined');cookie.classList.remove('show');});}
+
+  qa('[data-history-back]').forEach(btn=>btn.addEventListener('click',e=>{
+    e.preventDefault();
+    const fallback=btn.getAttribute('href')||'/work/';
+    if(history.length>1) history.back(); else location.href=fallback;
+  }));
 
   qa('a[data-transition]').forEach(a=>a.addEventListener('click',e=>{if(e.metaKey||e.ctrlKey||e.shiftKey||a.target==='_blank'||reduce)return;const href=a.getAttribute('href');if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('http'))return;const wipe=q('#navWipe');if(!wipe)return;e.preventDefault();gsap.timeline({onComplete:()=>location.href=href}).set(wipe,{transformOrigin:'bottom'}).to(wipe,{scaleY:1,duration:.45,ease:'power4.inOut'});}));
 })();

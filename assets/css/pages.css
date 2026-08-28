@@ -113,3 +113,26 @@
   .service-block{grid-template-columns:45px 1fr;padding:34px 0}.values-grid{grid-template-columns:1fr}.values-grid div{padding:30px}
   .contact-grid{gap:55px}.home-final-cta{padding:90px 0}
 }
+
+
+/* Case-study usability and motion refinements */
+.case-back{
+  display:inline-flex;align-items:center;gap:10px;margin-bottom:34px;
+  font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-45);
+  transition:color .3s ease,transform .3s ease;
+}
+.case-back::before{content:'←';font-size:17px;line-height:1;color:var(--accent);}
+.case-back:hover{color:var(--ink);transform:translateX(-4px);}
+.live-preview{
+  border-radius:2px;box-shadow:0 28px 70px rgba(21,19,15,.16);
+  transform-origin:center center;will-change:transform,clip-path;
+}
+.live-preview iframe{display:block;min-height:680px;}
+.live-preview .preview-actions{display:flex;justify-content:flex-end;padding:14px 10px 2px;}
+.live-preview .preview-actions a{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);}
+.case-intro-motion{overflow:hidden;}
+@media(max-width:760px){
+  .case-back{margin-bottom:24px}
+  .live-preview{padding:10px;margin:48px 0}
+  .live-preview iframe{height:68vh;min-height:560px}
+}
