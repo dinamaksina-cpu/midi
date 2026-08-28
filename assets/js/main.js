@@ -37,7 +37,8 @@
     if(typeof gsap==='undefined') return;
     if(window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
     if(q('.hero h1 .line span') && !reduce){gsap.to('.hero h1 .line span',{y:0,duration:1.05,stagger:.08,ease:'power4.out'});gsap.fromTo('.hero-top, .hero-copy, .hero-cta-group, .scroll-cue',{opacity:0,y:16},{opacity:1,y:0,duration:.9,stagger:.1,delay:.2,ease:'power3.out'});}
-    if(q('#heroOrb') && !reduce){gsap.to('#heroOrb',{rotate:360,duration:26,repeat:-1,ease:'none'});gsap.to('#heroOrb',{y:24,duration:3.4,yoyo:true,repeat:-1,ease:'sine.inOut'});}
+    if(q('#heroOrb') && !reduce){gsap.to('#heroOrb',{rotate:360,duration:30,repeat:-1,ease:'none'});gsap.to('#heroOrb',{y:18,duration:3.4,yoyo:true,repeat:-1,ease:'sine.inOut'});}
+    initHeroExperience();
     const marquee=q('#marquee'); if(marquee && !reduce) gsap.to(marquee,{xPercent:-50,duration:26,repeat:-1,ease:'linear'});
     qa('.reveal-up').forEach(el=>{const inner=q('.inner',el);if(!inner)return;if(reduce){inner.style.transform='none';inner.style.opacity='1';return;}gsap.set(inner,{yPercent:100,opacity:0});gsap.to(inner,{yPercent:0,opacity:1,duration:1.05,ease:'power4.out',scrollTrigger:{trigger:el,start:'top 88%'}});});
     if(!reduce){
@@ -61,6 +62,39 @@
     }
     initHorizontal();
     if(!reduce){qa('[data-tilt]').forEach(card=>{const img=q('img',card);if(!img)return;card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;gsap.to(img,{x:px*14,y:py*14,duration:.5,ease:'power3.out'});});card.addEventListener('mouseleave',()=>gsap.to(img,{x:0,y:0,duration:.7,ease:'power3.out'}));});}
+  }
+
+
+  function initHeroExperience(){
+    const hero=q('.hero'), shell=q('#heroOrbShell'), title=q('#heroTitle'), role=q('#heroRole');
+    if(!hero || reduce || typeof gsap==='undefined') return;
+
+    if(matchMedia('(hover:hover)').matches && shell && title){
+      const onMove=e=>{
+        const r=hero.getBoundingClientRect();
+        const nx=(e.clientX-r.left)/r.width-.5, ny=(e.clientY-r.top)/r.height-.5;
+        gsap.to(shell,{x:nx*28,y:ny*22,duration:.8,ease:'power3.out',overwrite:'auto'});
+        gsap.to(title,{x:nx*-7,y:ny*-5,duration:1.05,ease:'power3.out',overwrite:'auto'});
+      };
+      hero.addEventListener('mousemove',onMove);
+      hero.addEventListener('mouseleave',()=>{gsap.to(shell,{x:0,y:0,duration:1,ease:'power3.out'});gsap.to(title,{x:0,y:0,duration:1,ease:'power3.out'});});
+    }
+
+    if(role){
+      const roles=['Brand','Website','Content','Social','Digital']; let i=0;
+      setInterval(()=>{
+        i=(i+1)%roles.length;
+        gsap.to(role,{y:-7,opacity:0,duration:.22,ease:'power2.in',onComplete:()=>{role.textContent=roles[i];gsap.fromTo(role,{y:7,opacity:0},{y:0,opacity:1,duration:.35,ease:'power3.out'});}});
+      },1900);
+    }
+
+    if(window.ScrollTrigger){
+      gsap.timeline({scrollTrigger:{trigger:hero,start:'top top',end:'bottom top',scrub:.7}})
+        .to('#heroTitle',{y:-54,scale:.987,transformOrigin:'left center',ease:'none'},0)
+        .to('#heroOrbShell',{y:-84,scale:.88,opacity:.32,ease:'none'},0)
+        .to('.hero-bottom',{y:-24,opacity:.32,ease:'none'},0)
+        .to('.hero-top',{y:-12,opacity:.5,ease:'none'},0);
+    }
   }
 
   let workTrigger;
