@@ -486,3 +486,10 @@ footer .wrap{padding:90px 5.2vw 30px;}
   .hero h1{width:70vw;font-size:clamp(52px,8.7vw,120px);}
 }
 @media (max-width:760px){.hero-disc-stage{display:none;}}
+
+/* Hero headline: keep desktop slogan on exactly 3 lines */
+@media (min-width:761px){
+  .hero-title-stage{width:min(67vw,1120px);}
+  .hero h1{font-size:clamp(52px,7.15vw,128px);width:100%;}
+  .hero h1 .line{width:max-content;max-width:none;white-space:nowrap;}
+}
