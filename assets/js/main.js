@@ -70,8 +70,74 @@
         gsap.fromTo(el,{opacity:.35,x:-18},{opacity:1,x:0,duration:.8,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%',once:true}});
       });
     }
+    initMotionSystem();
     initHorizontal();
     if(!reduce){qa('[data-tilt]').forEach(card=>{const img=q('img',card);if(!img)return;card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;gsap.to(img,{x:px*14,y:py*14,duration:.5,ease:'power3.out'});});card.addEventListener('mouseleave',()=>gsap.to(img,{x:0,y:0,duration:.7,ease:'power3.out'}));});}
+  }
+
+  function initMotionSystem(){
+    document.body.classList.add('motion-enhanced');
+    const surfaces=[...qa('section'),q('footer')].filter(Boolean);
+    surfaces.forEach(surface=>{
+      surface.classList.add('motion-section');
+      if(!Array.from(surface.children).some(el=>el.classList.contains('motion-glow'))){
+        const glow=document.createElement('span'), divider=document.createElement('span');
+        glow.className='motion-glow';divider.className='motion-divider';glow.setAttribute('aria-hidden','true');divider.setAttribute('aria-hidden','true');
+        surface.prepend(divider);surface.prepend(glow);
+      }
+    });
+
+    const reactTargets=qa('.service-block, .proc-item, .why-cell, .values-grid > div, .work-copy, .contact-form .field');
+    reactTargets.forEach(el=>{
+      el.classList.add('motion-react');
+      if(!Array.from(el.children).some(child=>child.classList.contains('motion-sheen'))){
+        const sheen=document.createElement('span');sheen.className='motion-sheen';sheen.setAttribute('aria-hidden','true');el.prepend(sheen);
+      }
+    });
+
+    if(reduce || !window.ScrollTrigger){surfaces.forEach(el=>el.classList.add('is-active'));return;}
+
+    surfaces.forEach(surface=>{
+      ScrollTrigger.create({trigger:surface,start:'top 68%',end:'bottom 32%',onEnter:()=>surface.classList.add('is-active'),onEnterBack:()=>surface.classList.add('is-active'),onLeave:()=>surface.classList.remove('is-active'),onLeaveBack:()=>surface.classList.remove('is-active')});
+    });
+
+    const cascades=[
+      ['.process-list','.proc-item'],['.why-grid','.why-cell'],['.values-grid','div'],
+      ['.service-tags','span'],['.check-options','label'],['.contact-form','.field'],['.foot-cols','.foot-col']
+    ];
+    cascades.forEach(([groupSelector,itemSelector])=>qa(groupSelector).forEach(group=>{
+      const items=qa(itemSelector,group);if(!items.length)return;
+      gsap.fromTo(items,{opacity:0,y:28},{opacity:1,y:0,duration:.82,stagger:.075,ease:'power3.out',scrollTrigger:{trigger:group,start:'top 88%',once:true}});
+    }));
+
+    qa('.head-row .head-note, .about-columns > *, .contact-side, .form-submit').forEach((el,i)=>{
+      gsap.fromTo(el,{opacity:0,x:i%2?18:-18},{opacity:1,x:0,duration:.85,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 90%',once:true}});
+    });
+
+    const parallaxTargets=[...new Set(qa('.work-list .work-visual, .portfolio-image-visual, .live-preview, .project-browser-card, .case-media, .case-visual'))];
+    parallaxTargets.forEach(el=>{
+      el.classList.add('motion-image-shell');
+      gsap.fromTo(el,{yPercent:-2.4},{yPercent:2.4,ease:'none',scrollTrigger:{trigger:el,start:'top bottom',end:'bottom top',scrub:1.15}});
+    });
+
+    const finePointer=matchMedia('(hover:hover) and (pointer:fine)').matches;
+    if(finePointer){
+      surfaces.forEach(surface=>surface.addEventListener('mousemove',e=>{
+        const r=surface.getBoundingClientRect();
+        surface.style.setProperty('--motion-x',(((e.clientX-r.left)/r.width)*100).toFixed(1)+'%');
+        surface.style.setProperty('--motion-y',(((e.clientY-r.top)/r.height)*100).toFixed(1)+'%');
+      },{passive:true}));
+      reactTargets.forEach(el=>{
+        el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect();el.style.setProperty('--pointer-x',(((e.clientX-r.left)/r.width)*100).toFixed(1)+'%');el.style.setProperty('--pointer-y',(((e.clientY-r.top)/r.height)*100).toFixed(1)+'%');},{passive:true});
+        el.addEventListener('mouseenter',()=>cursor?.classList.add('grow'));el.addEventListener('mouseleave',()=>cursor?.classList.remove('grow'));
+      });
+    }
+
+    const navLinks=qa('.nav-links a');
+    const setSectionNav=href=>navLinks.forEach(link=>link.classList.toggle('section-active',Boolean(href)&&link.getAttribute('href')===href));
+    const sectionNavMap=[['#workPin','/work/'],['#services','/services/'],['#studio','/about/'],['#process','/about/']];
+    sectionNavMap.forEach(([selector,href])=>{const section=q(selector);if(!section)return;ScrollTrigger.create({trigger:section,start:'top 52%',end:'bottom 48%',onEnter:()=>setSectionNav(href),onEnterBack:()=>setSectionNav(href)});});
+    const hero=q('.hero');if(hero)ScrollTrigger.create({trigger:hero,start:'top top',end:'bottom 52%',onEnter:()=>setSectionNav(null),onEnterBack:()=>setSectionNav(null)});
   }
 
   let workTrigger;
@@ -102,5 +168,5 @@
   };
   updateProgress();window.addEventListener('scroll',updateProgress,{passive:true});window.addEventListener('resize',updateProgress,{passive:true});
 
-  qa('a[data-transition]').forEach(a=>a.addEventListener('click',e=>{if(e.metaKey||e.ctrlKey||e.shiftKey||a.target==='_blank'||reduce)return;const href=a.getAttribute('href');if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('http'))return;const wipe=q('#navWipe');if(!wipe)return;e.preventDefault();gsap.timeline({onComplete:()=>location.href=href}).set(wipe,{transformOrigin:'bottom'}).to(wipe,{scaleY:1,duration:.45,ease:'power4.inOut'});}));
+  qa('a[data-transition]').forEach(a=>a.addEventListener('click',e=>{if(e.metaKey||e.ctrlKey||e.shiftKey||a.target==='_blank'||reduce)return;const href=a.getAttribute('href');if(!href||href.startsWith('#')||href.startsWith('mailto:')||href.startsWith('http'))return;const wipe=q('#navWipe');if(!wipe)return;e.preventDefault();document.body.classList.add('is-leaving');gsap.timeline({onComplete:()=>location.href=href}).set(wipe,{transformOrigin:'bottom'}).to(wipe,{scaleY:1,duration:.55,ease:'power4.inOut'});}));
 })();
