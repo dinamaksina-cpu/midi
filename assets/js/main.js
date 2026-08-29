@@ -37,18 +37,12 @@
     if(typeof gsap==='undefined') return;
     if(window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
     if(q('.hero h1 .line span') && !reduce){
-      const heroLines=qa('.hero h1 .line span');
-      gsap.set(heroLines,{yPercent:118,x:-24,opacity:0,filter:'blur(7px)'});
-      const htl=gsap.timeline({delay:.06});
-      htl.to(heroLines,{yPercent:0,x:0,opacity:1,filter:'blur(0px)',duration:.92,stagger:.11,ease:'power4.out'});
-      qa('.hero h1 .line').forEach((line,i)=>{const sweep=line;gsap.fromTo(sweep,{ '--heroSweep':'0%'},{ '--heroSweep':'100%',duration:.7,delay:.18+i*.11,ease:'power2.out'});});
-      gsap.fromTo('.hero-top, .hero-copy, .hero-cta-group, .scroll-cue',{opacity:0,y:16},{opacity:1,y:0,duration:.9,stagger:.1,delay:.22,ease:'power3.out'});
+      gsap.set('.hero h1 .line span',{y:'115%',opacity:1});
+      gsap.to('.hero h1 .line span',{y:'0%',duration:1.05,stagger:.09,ease:'power4.out',onStart:()=>q('#heroTitle')?.classList.add('hero-title-live')});
+      gsap.fromTo('.hero-top, .hero-copy, .hero-cta-group, .scroll-cue',{opacity:0,y:16},{opacity:1,y:0,duration:.9,stagger:.1,delay:.2,ease:'power3.out'});
     }
-    if(q('#heroOrb') && !reduce){
-      gsap.to('#heroOrb',{rotate:360,duration:18,repeat:-1,ease:'none',transformOrigin:'50% 50%'});
-      if(q('.hero-orbit')) gsap.to('.hero-orbit',{rotate:-360,duration:30,repeat:-1,ease:'none',transformOrigin:'50% 50%'});
-      if(q('#heroOrbWrap')) gsap.to('#heroOrbWrap',{yPercent:-2,duration:3.2,yoyo:true,repeat:-1,ease:'sine.inOut'});
-    }
+    if(q('#heroOrb') && !reduce){gsap.to('#heroOrb',{rotation:360,duration:18,repeat:-1,ease:'none',transformOrigin:'50% 50%'});}
+    if(q('#heroOrbit') && !reduce){gsap.to('#heroOrbit',{rotation:360,duration:28,repeat:-1,ease:'none',transformOrigin:'50% 50%'});}
     const marquee=q('#marquee'); if(marquee && !reduce) gsap.to(marquee,{xPercent:-50,duration:26,repeat:-1,ease:'linear'});
     qa('.reveal-up').forEach(el=>{const inner=q('.inner',el);if(!inner)return;if(reduce){inner.style.transform='none';inner.style.opacity='1';return;}gsap.set(inner,{yPercent:100,opacity:0});gsap.to(inner,{yPercent:0,opacity:1,duration:1.05,ease:'power4.out',scrollTrigger:{trigger:el,start:'top 88%'}});});
     if(!reduce){
