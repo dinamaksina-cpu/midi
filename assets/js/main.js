@@ -41,8 +41,9 @@
         gsap.set('.hero h1 .line span',{y:'0%',x:-18,opacity:1,clipPath:'inset(0 100% 0 0)',filter:'blur(8px)'});
         gsap.to('.hero h1 .line span',{x:0,clipPath:'inset(0 0% 0 0)',filter:'blur(0px)',duration:.72,stagger:.2,ease:'power4.out',onStart:()=>q('#heroTitle')?.classList.add('hero-title-live')});
       }else{
-        gsap.set('.hero h1 .line span',{y:'115%',opacity:1});
-        gsap.to('.hero h1 .line span',{y:'0%',duration:1.05,stagger:.09,ease:'power4.out'});
+        gsap.set('.hero h1 .line span',{y:'0%',x:-12,opacity:1,clipPath:'inset(0 100% 0 0)',filter:'blur(6px)'});
+        gsap.to('.hero h1 .line span',{x:0,clipPath:'inset(0 0% 0 0)',filter:'blur(0px)',duration:.62,stagger:.16,ease:'power4.out',onStart:()=>q('#heroTitle')?.classList.add('hero-title-live')});
+        if(q('.hero-disc-stage')) gsap.fromTo('.hero-disc-stage',{opacity:0,scale:.84},{opacity:1,scale:1,duration:1,delay:.42,ease:'power3.out'});
       }
       gsap.fromTo('.hero-top, .hero-copy, .hero-cta-group, .scroll-cue',{opacity:0,y:16},{opacity:1,y:0,duration:.9,stagger:.1,delay:.2,ease:'power3.out'});
     }
@@ -73,34 +74,11 @@
     if(!reduce){qa('[data-tilt]').forEach(card=>{const img=q('img',card);if(!img)return;card.addEventListener('mousemove',e=>{const r=card.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;gsap.to(img,{x:px*14,y:py*14,duration:.5,ease:'power3.out'});});card.addEventListener('mouseleave',()=>gsap.to(img,{x:0,y:0,duration:.7,ease:'power3.out'}));});}
   }
 
-  let workTrigger, workHeadTrigger;
+  let workTrigger;
   function initHorizontal(){
-    const track=q('#workTrack'), pin=q('#workPin'), head=q('.home-work-head',pin);
-    if(!track||!pin||reduce||!window.ScrollTrigger) return;
-
-    if(workTrigger){workTrigger.kill();workTrigger=null;gsap.set(track,{clearProps:'transform'});}
-    if(workHeadTrigger){workHeadTrigger.kill();workHeadTrigger=null;}
-    if(head) gsap.set(head,{autoAlpha:0,y:22});
-
-    if(innerWidth<=760){
-      if(head) gsap.set(head,{clearProps:'opacity,visibility,transform'});
-      return;
-    }
-
+    const track=q('#workTrack'), pin=q('#workPin'); if(!track||!pin||reduce||!window.ScrollTrigger) return;
+    if(workTrigger){workTrigger.kill();workTrigger=null;gsap.set(track,{clearProps:'transform'});} if(innerWidth<=760) return;
     const distance=Math.max(0,track.scrollWidth-innerWidth+100); if(!distance) return;
-
-    if(head){
-      workHeadTrigger=ScrollTrigger.create({
-        trigger:pin,
-        start:'top 82%',
-        end:'top top',
-        onEnter:()=>gsap.to(head,{autoAlpha:1,y:0,duration:.65,ease:'power3.out',overwrite:true}),
-        onLeave:()=>gsap.to(head,{autoAlpha:0,y:-18,duration:.4,ease:'power2.in',overwrite:true}),
-        onEnterBack:()=>gsap.to(head,{autoAlpha:1,y:0,duration:.5,ease:'power3.out',overwrite:true}),
-        onLeaveBack:()=>gsap.to(head,{autoAlpha:0,y:22,duration:.35,ease:'power2.in',overwrite:true})
-      });
-    }
-
     const tween=gsap.to(track,{x:-distance,ease:'none',scrollTrigger:{trigger:pin,start:'top top',end:()=>'+='+(distance+innerHeight*.35),scrub:1,pin:true,invalidateOnRefresh:true}}); workTrigger=tween.scrollTrigger;
   }
   let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{initHorizontal();window.ScrollTrigger?.refresh();},250);});
