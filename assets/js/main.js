@@ -41,8 +41,9 @@
         gsap.set('.hero h1 .line span',{y:'0%',x:-18,opacity:1,clipPath:'inset(0 100% 0 0)',filter:'blur(8px)'});
         gsap.to('.hero h1 .line span',{x:0,clipPath:'inset(0 0% 0 0)',filter:'blur(0px)',duration:.72,stagger:.2,ease:'power4.out',onStart:()=>q('#heroTitle')?.classList.add('hero-title-live')});
       }else{
-        gsap.set('.hero h1 .line span',{y:'115%',opacity:1});
-        gsap.to('.hero h1 .line span',{y:'0%',duration:1.05,stagger:.09,ease:'power4.out'});
+        gsap.set('.hero h1 .line span',{y:'0%',x:-12,opacity:1,clipPath:'inset(0 100% 0 0)',filter:'blur(6px)'});
+        gsap.to('.hero h1 .line span',{x:0,clipPath:'inset(0 0% 0 0)',filter:'blur(0px)',duration:.62,stagger:.16,ease:'power4.out',onStart:()=>q('#heroTitle')?.classList.add('hero-title-live')});
+        if(q('.hero-disc-stage')) gsap.fromTo('.hero-disc-stage',{opacity:0,scale:.84},{opacity:1,scale:1,duration:1,delay:.42,ease:'power3.out'});
       }
       gsap.fromTo('.hero-top, .hero-copy, .hero-cta-group, .scroll-cue',{opacity:0,y:16},{opacity:1,y:0,duration:.9,stagger:.1,delay:.2,ease:'power3.out'});
     }
@@ -78,29 +79,7 @@
     const track=q('#workTrack'), pin=q('#workPin'); if(!track||!pin||reduce||!window.ScrollTrigger) return;
     if(workTrigger){workTrigger.kill();workTrigger=null;gsap.set(track,{clearProps:'transform'});} if(innerWidth<=760) return;
     const distance=Math.max(0,track.scrollWidth-innerWidth+100); if(!distance) return;
-    const workHead=q('.home-work-head',pin);
-    if(workHead){
-      gsap.set(workHead,{autoAlpha:1,y:0});
-      ScrollTrigger.create({
-        trigger:pin,
-        start:'top 82%',
-        end:'top top',
-        scrub:.7,
-        onUpdate:self=>{
-          const p=self.progress;
-          gsap.set(workHead,{autoAlpha:p,y:(1-p)*26});
-        }
-      });
-    }
-    const tween=gsap.to(track,{x:-distance,ease:'none',scrollTrigger:{
-      trigger:pin,start:'top top',end:()=>'+='+(distance+innerHeight*.35),scrub:1,pin:true,invalidateOnRefresh:true,
-      onUpdate:self=>{
-        if(!workHead) return;
-        const p=self.progress;
-        const fade=gsap.utils.clamp(0,1,1-(p-.05)/.18);
-        gsap.set(workHead,{autoAlpha:fade,y:-28*(1-fade)});
-      }
-    }}); workTrigger=tween.scrollTrigger;
+    const tween=gsap.to(track,{x:-distance,ease:'none',scrollTrigger:{trigger:pin,start:'top top',end:()=>'+='+(distance+innerHeight*.35),scrub:1,pin:true,invalidateOnRefresh:true}}); workTrigger=tween.scrollTrigger;
   }
   let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{initHorizontal();window.ScrollTrigger?.refresh();},250);});
 
