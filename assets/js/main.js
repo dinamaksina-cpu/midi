@@ -52,7 +52,7 @@
     const marquee=q('#marquee'); if(marquee && !reduce) gsap.to(marquee,{xPercent:-50,duration:26,repeat:-1,ease:'linear'});
     qa('.reveal-up').forEach(el=>{const inner=q('.inner',el);if(!inner)return;if(reduce){inner.style.transform='none';inner.style.opacity='1';return;}gsap.set(inner,{yPercent:100,opacity:0});gsap.to(inner,{yPercent:0,opacity:1,duration:1.05,ease:'power4.out',scrollTrigger:{trigger:el,start:'top 88%'}});});
     if(!reduce){
-      qa('.case-meta > div, .case-copy-grid, .live-preview, .page-actions, .work-feature, .service-block, .values-grid > div').forEach((el,i)=>{
+      qa('.case-meta > div, .case-copy-grid, .live-preview, .page-actions, .work-feature, .home-project, .service-block, .values-grid > div').forEach((el,i)=>{
         gsap.fromTo(el,{opacity:0,y:34},{opacity:1,y:0,duration:.9,ease:'power3.out',delay:Math.min(i*.015,.08),scrollTrigger:{trigger:el,start:'top 90%',once:true}});
       });
       qa('.live-preview').forEach(el=>{
@@ -77,9 +77,11 @@
   let workTrigger;
   function initHorizontal(){
     const track=q('#workTrack'), pin=q('#workPin'); if(!track||!pin||reduce||!window.ScrollTrigger) return;
-    if(workTrigger){workTrigger.kill();workTrigger=null;gsap.set(track,{clearProps:'transform'});} if(innerWidth<=760) return;
+    const progress=q('#workProgressBar');
+    if(workTrigger){workTrigger.kill();workTrigger=null;gsap.set(track,{clearProps:'transform'});} if(innerWidth<=760){if(progress)gsap.set(progress,{scaleX:0});return;}
     const distance=Math.max(0,track.scrollWidth-innerWidth+100); if(!distance) return;
-    const tween=gsap.to(track,{x:-distance,ease:'none',scrollTrigger:{trigger:pin,start:'top top',end:()=>'+='+(distance+innerHeight*.35),scrub:1,pin:true,invalidateOnRefresh:true}}); workTrigger=tween.scrollTrigger;
+    const stops=Math.max(1,qa('.home-project',track).length-1);
+    const tween=gsap.to(track,{x:-distance,ease:'none',scrollTrigger:{trigger:pin,start:'top top',end:()=>'+='+(distance+innerHeight*.35),scrub:1,pin:true,invalidateOnRefresh:true,snap:{snapTo:1/stops,duration:{min:.18,max:.55},delay:.08,ease:'power2.inOut'},onUpdate:self=>{if(progress)gsap.set(progress,{scaleX:self.progress});}}}); workTrigger=tween.scrollTrigger;
   }
   let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{initHorizontal();window.ScrollTrigger?.refresh();},250);});
 
