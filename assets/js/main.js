@@ -78,7 +78,29 @@
     const track=q('#workTrack'), pin=q('#workPin'); if(!track||!pin||reduce||!window.ScrollTrigger) return;
     if(workTrigger){workTrigger.kill();workTrigger=null;gsap.set(track,{clearProps:'transform'});} if(innerWidth<=760) return;
     const distance=Math.max(0,track.scrollWidth-innerWidth+100); if(!distance) return;
-    const tween=gsap.to(track,{x:-distance,ease:'none',scrollTrigger:{trigger:pin,start:'top top',end:()=>'+='+(distance+innerHeight*.35),scrub:1,pin:true,invalidateOnRefresh:true}}); workTrigger=tween.scrollTrigger;
+    const workHead=q('.home-work-head',pin);
+    if(workHead){
+      gsap.set(workHead,{autoAlpha:1,y:0});
+      ScrollTrigger.create({
+        trigger:pin,
+        start:'top 82%',
+        end:'top top',
+        scrub:.7,
+        onUpdate:self=>{
+          const p=self.progress;
+          gsap.set(workHead,{autoAlpha:p,y:(1-p)*26});
+        }
+      });
+    }
+    const tween=gsap.to(track,{x:-distance,ease:'none',scrollTrigger:{
+      trigger:pin,start:'top top',end:()=>'+='+(distance+innerHeight*.35),scrub:1,pin:true,invalidateOnRefresh:true,
+      onUpdate:self=>{
+        if(!workHead) return;
+        const p=self.progress;
+        const fade=gsap.utils.clamp(0,1,1-(p-.05)/.18);
+        gsap.set(workHead,{autoAlpha:fade,y:-28*(1-fade)});
+      }
+    }}); workTrigger=tween.scrollTrigger;
   }
   let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{initHorizontal();window.ScrollTrigger?.refresh();},250);});
 
