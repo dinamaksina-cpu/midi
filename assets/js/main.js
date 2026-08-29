@@ -37,12 +37,17 @@
     if(typeof gsap==='undefined') return;
     if(window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
     if(q('.hero h1 .line span') && !reduce){
-      gsap.set('.hero h1 .line span',{y:'115%',opacity:1});
-      gsap.to('.hero h1 .line span',{y:'0%',duration:1.05,stagger:.09,ease:'power4.out',onStart:()=>q('#heroTitle')?.classList.add('hero-title-live')});
+      if(innerWidth>760){
+        gsap.set('.hero h1 .line span',{y:'0%',x:-18,opacity:1,clipPath:'inset(0 100% 0 0)',filter:'blur(8px)'});
+        gsap.to('.hero h1 .line span',{x:0,clipPath:'inset(0 0% 0 0)',filter:'blur(0px)',duration:.72,stagger:.2,ease:'power4.out',onStart:()=>q('#heroTitle')?.classList.add('hero-title-live')});
+      }else{
+        gsap.set('.hero h1 .line span',{y:'115%',opacity:1});
+        gsap.to('.hero h1 .line span',{y:'0%',duration:1.05,stagger:.09,ease:'power4.out'});
+      }
       gsap.fromTo('.hero-top, .hero-copy, .hero-cta-group, .scroll-cue',{opacity:0,y:16},{opacity:1,y:0,duration:.9,stagger:.1,delay:.2,ease:'power3.out'});
     }
-    if(q('#heroOrb') && !reduce){gsap.to('#heroOrb',{rotation:360,duration:18,repeat:-1,ease:'none',transformOrigin:'50% 50%'});}
-    if(q('#heroOrbit') && !reduce){gsap.to('#heroOrbit',{rotation:360,duration:28,repeat:-1,ease:'none',transformOrigin:'50% 50%'});}
+    if(q('#heroOrb') && !reduce){gsap.to('#heroOrb',{rotation:360,duration:36,repeat:-1,ease:'none',transformOrigin:'50% 50%'});}
+    if(q('#heroOrbit') && !reduce){gsap.to('#heroOrbit',{rotation:360,duration:48,repeat:-1,ease:'none',transformOrigin:'50% 50%'});}
     const marquee=q('#marquee'); if(marquee && !reduce) gsap.to(marquee,{xPercent:-50,duration:26,repeat:-1,ease:'linear'});
     qa('.reveal-up').forEach(el=>{const inner=q('.inner',el);if(!inner)return;if(reduce){inner.style.transform='none';inner.style.opacity='1';return;}gsap.set(inner,{yPercent:100,opacity:0});gsap.to(inner,{yPercent:0,opacity:1,duration:1.05,ease:'power4.out',scrollTrigger:{trigger:el,start:'top 88%'}});});
     if(!reduce){
